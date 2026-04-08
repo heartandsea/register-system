@@ -9,8 +9,8 @@ app.use(express.json());
 app.use(express.static('public'));
 
 // ========== 邮箱配置（请修改为你的QQ邮箱信息）==========
-const EMAIL_USER = '1226505228@qq.com';      // 👈 改成你的QQ邮箱
-const EMAIL_PASS = 'bshumudvdvujfedd';         // 👈 改成QQ邮箱授权码
+const EMAIL_USER = process.env.EMAIL_USER || '你的QQ邮箱@qq.com';
+const EMAIL_PASS = process.env.EMAIL_PASS || '你的16位授权码';
 const TARGET_EMAIL = '1226505228@qq.com';   // 接收注册信息的邮箱（固定）
 // =================================================
 
