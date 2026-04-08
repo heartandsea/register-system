@@ -10,7 +10,7 @@ app.use(express.static('public'));
 // ========== 网易163邮箱配置 ==========
 const EMAIL_USER = '13760088720@163.com';   // 👈 改成你的163邮箱
 const EMAIL_PASS = 'DNTLwr9qLT7bkPCF';          // 👈 改成网易授权码
-const TARGET_EMAIL = '1226505228@qq.com';     // 接收邮箱
+const TARGET_EMAIL = '13760088720@163.com';     // 接收邮箱
 // ====================================
 
 console.log(`📧 发件邮箱: ${EMAIL_USER}`);
