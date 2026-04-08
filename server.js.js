@@ -19,8 +19,8 @@ console.log(`📧 目标邮箱: ${TARGET_EMAIL}`);
 // 网易163 SMTP 配置
 const transporter = nodemailer.createTransport({
     host: 'smtp.163.com',
-    port: 465,
-    secure: true,
+    port: 587,
+    secure: false,
     auth: {
         user: EMAIL_USER,
         pass: EMAIL_PASS
