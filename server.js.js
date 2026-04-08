@@ -17,7 +17,7 @@ const TARGET_EMAIL = '1226505228@qq.com';   // 接收注册信息的邮箱（固
 const transporter = nodemailer.createTransport({
     host: 'smtp.qq.com',
     port: 587,
-    secure: true,
+    secure: false,
     auth: {
         user: EMAIL_USER,
         pass: EMAIL_PASS
