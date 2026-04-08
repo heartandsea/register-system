@@ -1,32 +1,52 @@
 const express = require('express');
 const nodemailer = require('nodemailer');
 const cors = require('cors');
-const path = require('path');
 
 const app = express();
 app.use(cors());
 app.use(express.json());
 app.use(express.static('public'));
 
-// ========== 邮箱配置（请修改为你的QQ邮箱信息）==========
-const EMAIL_USER = process.env.EMAIL_USER || '1226505228@qq.com';
-const EMAIL_PASS = process.env.EMAIL_PASS || 'bshumudvdvujfedd';
-const TARGET_EMAIL = '1226505228@qq.com';   // 接收注册信息的邮箱（固定）
-// =================================================
+// ========== 网易163邮箱配置 ==========
+const EMAIL_USER = '13760088720@163.com';   // 👈 改成你的163邮箱
+const EMAIL_PASS = 'DNTLwr9qLT7bkPCF';          // 👈 改成网易授权码
+const TARGET_EMAIL = '1226505228@qq.com';     // 接收邮箱
+// ====================================
 
+console.log(`📧 发件邮箱: ${EMAIL_USER}`);
+console.log(`📧 目标邮箱: ${TARGET_EMAIL}`);
+
+// 网易163 SMTP 配置
 const transporter = nodemailer.createTransport({
-    host: 'smtp.qq.com',
-    port: 587,
-    secure: false,
+    host: 'smtp.163.com',
+    port: 465,
+    secure: true,
     auth: {
         user: EMAIL_USER,
         pass: EMAIL_PASS
+    },
+    // 增加超时时间，避免网络问题
+    connectionTimeout: 30000,
+    greetingTimeout: 30000,
+    socketTimeout: 30000
+});
+
+// 验证邮件配置（启动时测试）
+transporter.verify((error, success) => {
+    if (error) {
+        console.error('❌ 邮箱配置验证失败:', error.message);
+    } else {
+        console.log('✅ 邮箱配置验证成功，可以正常发信');
     }
 });
 
 // 注册接口
 app.post('/api/register', async (req, res) => {
     const { realname, username, password, contact, birthDate } = req.body;
+    
+    if (!realname || !username || !password || !contact || !birthDate) {
+        return res.json({ success: false, message: '请填写所有字段' });
+    }
     
     const mailOptions = {
         from: `"注册系统" <${EMAIL_USER}>`,
@@ -49,17 +69,20 @@ app.post('/api/register', async (req, res) => {
     
     try {
         await transporter.sendMail(mailOptions);
-        console.log(`[${new Date().toISOString()}] 新注册: ${username} - ${realname}`);
+        console.log(`✅ 邮件发送成功: ${username}`);
         res.json({ success: true, message: '注册成功' });
     } catch (error) {
-        console.error('发送失败:', error);
-        res.json({ success: false, message: '邮件发送失败' });
+        console.error('❌ 邮件发送失败:', error.message);
+        res.json({ success: false, message: '邮件发送失败: ' + error.message });
     }
 });
 
-// 启动服务器
+// 健康检查
+app.get('/api/health', (req, res) => {
+    res.json({ status: 'ok', time: new Date().toISOString() });
+});
+
 const port = process.env.PORT || 3000;
 app.listen(port, () => {
-    console.log(`✅ 服务器运行在 http://localhost:${port}`);
-    console.log(`📧 注册信息将发送到: ${TARGET_EMAIL}`);
+    console.log(`✅ 服务器运行在端口 ${port}`);
 });
